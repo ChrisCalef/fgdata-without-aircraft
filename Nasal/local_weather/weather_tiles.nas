@@ -2900,6 +2900,14 @@ else
 	x=-24000.0; y=-15000.0 +rand() *30000.0; 
 	local_weather.create_streak("Nimbus",lat+get_lat(x,y,phi), lon+get_lon(x,y,phi), alt_eff,500.0,4,1310.0,0.0,1500.0,12,1310.0,0.2,500.0,alpha,1.0);
 	
+# rain droplet size for Nimbus clouds is medium
+
+local_weather.setRainDropletSize(0.015 + rand() * 0.005);
+
+# set the precipitation effect volumes
+
+
+
 if (rain > 0.1)
 	{
 	local_weather.create_effect_volume(3, lat, lon, 20000.0, 20000.0, alpha, 0.0, alt+900.0, 500.0 + (1.0 - 0.5 * rain) * 5500.0, 0.5 * rain , -1, -1, -1,0 ,0.95);
@@ -2935,6 +2943,13 @@ var create_8_8_stratus_rain = func (lat, lon, alt, alpha, rain) {
 
 
 create_8_8_stratus(lat, lon, alt, alpha);
+
+
+# rain droplet size for Stratus clouds is small
+
+local_weather.setRainDropletSize(0.01 + rand() * 0.005);
+
+# set the precipitation effect volumes
 
 
 if (rain > 0.1)	
@@ -2990,6 +3005,13 @@ var alt_cloud = alt;
 
 if (local_weather.hardcoded_clouds_flag == 1) {alt_cloud = alt_cloud - 3000.0;}
 
+# rain droplet size for Nimbus clouds is medium
+
+local_weather.setRainDropletSize(0.017 + rand() * 0.007);
+
+# set the precipitation effect volumes
+
+
 for (var i = 0; i < 3; i = i + 1)
 	{
 	var x = 2.0 * (rand()-0.5) * 2000.0 + i * 12000.0 - 12000.0;
@@ -2997,6 +3019,11 @@ for (var i = 0; i < 3; i = i + 1)
 	var beta = rand() * 360.0;
 
 	local_weather.create_layer("Nimbus", lat+get_lat(x,y,phi), lon+get_lon(x,y,phi), alt_cloud, 500.0, 12000.0, 7000.0, beta, 1.0, 0.2, 1, 1.0);
+
+
+
+
+
 
 	if (rain > 0.1)
 		{
@@ -3033,6 +3060,14 @@ var phi = alpha * math.pi/180.0;
 var alt_cloud = alt;
 
 if (local_weather.hardcoded_clouds_flag == 1) {alt_cloud = alt_cloud - local_weather.offset_map["Stratus"];}
+
+
+# rain droplet size for Stratus clouds is small
+
+local_weather.setRainDropletSize(0.01 + rand() * 0.005);
+
+# set the precipitation effect volumes
+
 
 for (var i = 0; i < 3; i = i + 1)
 	{
@@ -4370,6 +4405,11 @@ local_weather.create_layer("Cumulonimbus (cloudlet)", lat, lon, alt_eff+3000.0, 
 # set the exclusion region for the Cumulus layer
 append(elat, lat); append(elon, lon); append(erad, 4000.0 * scale * 1.2);
 
+# rain droplet size for Cumulonimbus clouds is large
+local_weather.setRainDropletSize(0.025 + rand() * 0.015);
+
+# set the precipitation effect volumes
+
 # set precipitation, visibility, updraft and turbulence in the cloud
 
 local_weather.create_effect_volume(1, lat, lon, 4000.0 * 0.7 * scale, 4000.0 * 0.7 * scale , 0.0, 0.0, 20000.0, 1100.0, 0.8, -1, 0.6, 15.0,1 ,-1);
@@ -4404,6 +4444,9 @@ local_weather.create_layer("Cumulonimbus (cloudlet)", lat, lon, alt_eff+10000, 1
 
 # set the exclusion region for the Cumulus layer
 append(elat, lat); append(elon, lon); append(erad, 6000.0 * scale * 1.2);
+
+# rain droplet size for Cumulonimbus clouds is large
+local_weather.setRainDropletSize(0.025 + rand() * 0.015);
 
 # set precipitation, visibility, updraft and turbulence in the cloud
 
@@ -4449,6 +4492,10 @@ local_weather.create_layer("Stratus (thin)", lat+get_lat(0,-4000,phi), lon+get_l
 # set the exclusion region for the Cumulus layer
 append(elat, lat); append(elon, lon); append(erad, 7500.0 * scale * 1.2);
 
+# rain droplet size for Cumulonimbus clouds is large
+local_weather.setRainDropletSize(0.025 + rand() * 0.015);
+
+# create the precipitation effect volume
 local_weather.create_effect_volume(1, lat, lon, 7500.0 * 0.7 * scale, 7500.0 * 0.7 * scale , 0.0, 0.0, 20000.0, 1100.0, 1.0, -1, 1.0, 25.0,1,-1 );
 
 # set the wxradar echo

@@ -429,7 +429,8 @@
   <moonlight type="double" userarchive="n">0.0</moonlight>
  <!-- config for noctilucent cloud generation -->
   <create-noctilucent-clouds type="bool" userarchive="n">false</create-noctilucent-clouds>
-  <!-- definitions for the environment at surface interface -->
+ 
+ <!-- definitions for the environment at surface interface -->
   <surface>
     <scattering type="double" userarchive="n">0.7</scattering>
     <dust-cover-factor type="double" userarchive="y">0.0</dust-cover-factor>
@@ -437,4 +438,14 @@
     <wetness type="double" userarchive="y">0.0</wetness>
     <snow-thickness-factor type="double" userarchive="y">1.0</snow-thickness-factor>
   </surface>
+
+ <!-- definitions for the detailed precipitation manager -->
+ <precipitation-control>
+     <rain-droplet-size type="float" userarchive="n">0.015</rain-droplet-size>
+     <snow-flake-size type="float" userarchive="n">0.03</snow-flake-size>
+     <detailed-precipitation type="bool" userarchive="n">false</detailed-precipitation>
+     <illumination type="float" userarchive="n">1.0</illumination>
+     <clip-distance type="float" userarchive="n">5.0</clip-distance>
+  </precipitation-control>
+
 </PropertyList>

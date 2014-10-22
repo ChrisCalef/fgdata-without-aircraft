@@ -1746,6 +1746,10 @@ weather_tiles.rnd_store = rand();
 
 setprop("/sim/rendering/clouds3d-wrap",1);
 
+# hand precipitation control back to automatic
+
+props.globals.getNode("/environment/precipitation-control/detailed-precipitation").setBoolValue("false");
+
 # indicate that we are no longer running
 
 

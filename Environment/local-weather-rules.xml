@@ -801,4 +801,37 @@
     <output>/environment/tree-season</output>
   </filter>
   
+
+  <filter>
+    <name>EnvironmentInterpolator:Precipitation:Illumination</name>
+    <type>gain</type>
+    <enable>
+      <condition>
+	<property>/environment/precipitation-control/detailed-precipitation</property>
+      </condition>
+     </enable>
+     <input>
+       <expression>
+         <sum>
+           <property>/rendering/scene/diffuse/red</property>
+	   <value>0.3</value>
+	   <product>
+              <property>/sim/rendering/als-secondary-lights/use-searchlight</property>
+	      <value>0.3</value>
+           </product>
+	   <product>
+              <property>/sim/rendering/als-secondary-lights/use-landing-light</property>
+	      <value>0.3</value>
+           </product>
+	   <product>
+              <property>/sim/rendering/als-secondary-lights/use-alt-landing-light</property>
+	      <value>0.3</value>
+           </product>
+         </sum>
+       </expression>
+     </input>
+     <output>/environment/precipitation-control/illumination</output>
+     <min>0.0</min>
+     <max>1.0</max>
+  </filter>
 </PropertyList>

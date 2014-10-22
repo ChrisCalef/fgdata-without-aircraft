@@ -170,9 +170,13 @@ setprop("/environment/clouds/layer[0]/elevation-ft",0.0);
 # layer wrapping off
 setprop("/sim/rendering/clouds3d-wrap",0);
 
-# rain altitude limit off 
+# rain altitude limit off, detailed precipitation control on
 
 props.globals.getNode("/environment/params/use-external-precipitation-level").setBoolValue("true");
+props.globals.getNode("/environment/precipitation-control/detailed-precipitation").setBoolValue("true");
+
+
+# set skydome unloading off
 
 setprop("/sim/rendering/minimum-sky-visibility", 0.0);
 
@@ -246,7 +250,7 @@ setprop("/environment/local-weather-lift-fps",lift);
 }
 
 ####################################
-# set rain to given value
+# set rain properties
 ####################################
 
 var setRain = func (rain) {
@@ -254,14 +258,26 @@ var setRain = func (rain) {
 setprop("/environment/rain-norm", rain);
 }
 
+
+var setRainDropletSize = func (size) {
+
+setprop("/environment/precipitation-control/rain-droplet-size", size);
+}
+
 ####################################
-# set snow to given value
+# set snow properties
 ####################################
 
 var setSnow = func (snow) {
 
 setprop("/environment/snow-norm", snow);
 }
+
+var setSnowFlakeSize = func (size) {
+
+setprop("/environment/precipitation-control/snow-flake-size", size);
+}
+
 
 
 ####################################

@@ -103,6 +103,16 @@
         <value><use>eye_alt</use></value>
       </uniform>
       <uniform>
+        <name>max_size</name>
+        <type>float</type>
+        <value><use>max-size</use></value>
+      </uniform>
+      <uniform>
+        <name>is_directional</name>
+        <type>bool</type>
+        <value><use>light-directional</use></value>
+      </uniform>
+      <uniform>
         <name>texture</name>
         <type>sampler-2d</type>
         <value type="int">0</value>

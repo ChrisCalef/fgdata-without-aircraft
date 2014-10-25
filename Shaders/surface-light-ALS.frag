@@ -9,6 +9,7 @@ uniform float eye_alt;
 uniform float terminator;
 uniform float size;
 
+
 varying vec3 relPos;
 varying vec2 rawPos;
 varying float pixelSize;
@@ -55,9 +56,14 @@ float r = length(coord);
 if (pixelSize<1.3) {return vec4 (1.0,1.0,1.0,1.0) * 0.08;}
 
 float angle = noise * 6.2832;
+ 
 float sinphi = dot(vec2 (sin(angle),cos(angle)), normalize(coord));
-
-float ray = clamp(pow(sin(mod((sinphi-3.0) * (sinphi-3.0),6.2832)),10.0),0.0,1.0);
+float sinterm = sin(mod((sinphi-3.0) * (sinphi-3.0),6.2832));
+float ray = 0.0;
+if (sinterm == 0.0)
+	{ray = 0.0;} 
+else 
+	{ray = clamp(pow(sinterm,10.0),0.0,1.0);}
 
 float fogEffect =  (1.0-smoothstep(0.4,0.8,transmission));
 
@@ -147,7 +153,7 @@ void main()
 
     //vec4 texel = texture2D(texture,gl_TexCoord[0].st);
     vec4 texel = light_sprite(gl_TexCoord[0].st,transmission, noise);
-    gl_FragColor =   vec4 (gl_Color.rgb, texel.a * transmission * dist_att); 
+    gl_FragColor =   vec4 (clamp(gl_Color.rgb,0.0,1.0), texel.a * transmission * dist_att); 
   
 
 }

@@ -32,6 +32,7 @@
 		<dust_cover_factor><use>/environment/surface/dust-cover-factor</use></dust_cover_factor>
 		<fogtype><use>/sim/rendering/shaders/skydome</use></fogtype>
 		<fogstructure><use>/environment/fog-structure</use></fogstructure>
+		<air_pollution><use>/environment/air-pollution-norm</use></air_pollution>
 		<cloud_self_shading><use>/environment/cloud-self-shading</use></cloud_self_shading>
 		<quality_level><use>/sim/rendering/shaders/landmass</use></quality_level>
 		<tquality_level><use>/sim/rendering/shaders/transition</use></tquality_level>
@@ -134,6 +135,7 @@
 	<vertex-shader>Shaders/cloud-shadowfunc.frag</vertex-shader>
         <fragment-shader>Shaders/tree-ALS.frag</fragment-shader>
 	<fragment-shader>Shaders/secondary_lights.frag</fragment-shader>
+	<fragment-shader>Shaders/hazes.frag</fragment-shader>
       </program>
       <uniform>
         <name>visibility</name>
@@ -549,6 +551,7 @@
 	<vertex-shader>Shaders/cloud-shadowfunc.frag</vertex-shader>
         <fragment-shader>Shaders/tree-ALS.frag</fragment-shader>
 	<fragment-shader>Shaders/secondary_lights.frag</fragment-shader>
+	<fragment-shader>Shaders/hazes.frag</fragment-shader>
       </program>
       <uniform>
         <name>visibility</name>

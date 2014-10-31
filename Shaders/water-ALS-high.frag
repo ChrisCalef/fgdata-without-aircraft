@@ -15,7 +15,6 @@ uniform sampler2D perlin_normalmap;
 uniform sampler2D ice_texture;
 uniform sampler2D topo_map;
 
-uniform sampler3D Noise;
 
 uniform float saturation, Overcast, WindE, WindN;
 uniform float osg_SimulationTime;
@@ -79,7 +78,8 @@ const float EarthRadius = 5800000.0;
 
 ////included functions /////
 
-
+float Noise3D(in vec3 coord, in float wavelength);
+float Noise2D(in vec2 coord, in float wavelength);
 float shadow_func (in float x, in float y, in float noise, in float dist);
 float fog_func (in float targ, in float alt);
 float rayleigh_in_func(in float dist, in float air_pollution, in float avisibility, in float eye_alt, in float vertex_alt);
@@ -94,94 +94,6 @@ vec3 landing_light(in float offset);
 //////////////////////
 
 /////// functions /////////
-
-
-
-float rand2D(in vec2 co){
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-}
-
-float rand3D(in vec3 co){
-    return fract(sin(dot(co.xyz ,vec3(12.9898,78.233,144.7272))) * 43758.5453);
-}
-
-float cosine_interpolate(in float a, in float b, in float x)
-{
-	float ft = x * 3.1415927;
-	float f = (1.0 - cos(ft)) * .5;
-
-	return  a*(1.0-f) + b*f;
-}
-
-float simple_interpolate(in float a, in float b, in float x)
-{
-return a + smoothstep(0.0,1.0,x) * (b-a);
-}
-
-float interpolatedNoise2D(in float x, in float y)
-{
-      float integer_x    = x - fract(x);
-      float fractional_x = x - integer_x;
-
-      float integer_y    = y - fract(y);
-      float fractional_y = y - integer_y;
-
-      float v1 = rand2D(vec2(integer_x, integer_y));
-      float v2 = rand2D(vec2(integer_x+1.0, integer_y));
-      float v3 = rand2D(vec2(integer_x, integer_y+1.0));
-      float v4 = rand2D(vec2(integer_x+1.0, integer_y +1.0));
-
-      float i1 = simple_interpolate(v1 , v2 , fractional_x);
-      float i2 = simple_interpolate(v3 , v4 , fractional_x);
-
-      return simple_interpolate(i1 , i2 , fractional_y);
-}
-
-float interpolatedNoise3D(in float x, in float y, in float z)
-{
-      float integer_x    = x - fract(x);
-      float fractional_x = x - integer_x;
-
-      float integer_y    = y - fract(y);
-      float fractional_y = y - integer_y;
-
-      float integer_z    = z - fract(z);
-      float fractional_z = z - integer_z;
-
-      float v1 = rand3D(vec3(integer_x, integer_y, integer_z));
-      float v2 = rand3D(vec3(integer_x+1.0, integer_y, integer_z));
-      float v3 = rand3D(vec3(integer_x, integer_y+1.0, integer_z));
-      float v4 = rand3D(vec3(integer_x+1.0, integer_y +1.0, integer_z));
-
-      float v5 = rand3D(vec3(integer_x, integer_y, integer_z+1.0));
-      float v6 = rand3D(vec3(integer_x+1.0, integer_y, integer_z+1.0));
-      float v7 = rand3D(vec3(integer_x, integer_y+1.0, integer_z+1.0));
-      float v8 = rand3D(vec3(integer_x+1.0, integer_y +1.0, integer_z+1.0));
-
-
-      float i1 = simple_interpolate(v1,v5, fractional_z);
-      float i2 = simple_interpolate(v2,v6, fractional_z);
-      float i3 = simple_interpolate(v3,v7, fractional_z);
-      float i4 = simple_interpolate(v4,v8, fractional_z);
-
-      float ii1 = simple_interpolate(i1,i2,fractional_x);
-      float ii2 = simple_interpolate(i3,i4,fractional_x);
- 
-
-      return simple_interpolate(ii1 , ii2 , fractional_y);
-}
-
-float Noise2D(in vec2 coord, in float wavelength)
-{
-return interpolatedNoise2D(coord.x/wavelength, coord.y/wavelength);
-
-}
-
-float Noise3D(in vec3 coord, in float wavelength)
-{
-return interpolatedNoise3D(coord.x/wavelength, coord.y/wavelength, coord.z/wavelength);
-}
-
 
 
 void rotationmatrix(in float angle, out mat4 rotmat)
@@ -500,9 +412,6 @@ void main(void)
          if (normalmap_dds > 0)
                 {N = -N;} //dds fix
 
-
-	
-
         // primary reflection of the sun
         specular_light = gl_Color.rgb * earthShade;
 
@@ -514,8 +423,11 @@ void main(void)
 
 	vec3 ER = E - 2.0 * N * dot(E,N);
 	float ctrefl = dot(vec3(0.0,0.0,1.0), -normalize(ER));
-	float fresnel = -0.5 + 8.0 * (1.0-smoothstep(0.0,0.4, dot(E,N)));
-	specular_color += (ctrefl*ctrefl) * fresnel*  specular_light.rgb;
+	//float fresnel = -0.5 + 8.0 * (1.0-smoothstep(0.0,0.4, dot(E,N)));
+	float fresnel =  8.0 * (1.0-smoothstep(0.0,0.4, dot(E,N)));
+	//specular_color += (ctrefl*ctrefl) * fresnel*  specular_light.rgb;
+
+	specular_color += ((0.15*(1.0-ctrefl* ctrefl) * fresnel) - 0.3) * specular_light.rgb;
 
 
 	vec4 specular = vec4(specular_color, 0.5);
@@ -782,6 +694,17 @@ if (intensity > 0.0) // this needs to be a condition, because otherwise hazeColo
 
 
 	}
-	gl_FragColor = finalColor;
+else
+	{
+	float rShade = 0.9 * smoothstep(terminator_width+ terminator, -terminator_width + terminator, yprime_alt-340000.0) + 0.1;
+	float lightIntensity = length(gl_Color.rgb)/1.73 * rShade;
+	vec3 rayleighColor = vec3 (0.17, 0.52, 0.87) * lightIntensity;
+	float rayleighStrength = rayleigh_in_func(dist, air_pollution, avisibility/max(lightIntensity,0.05), eye_alt, eye_alt + relPos.z);
+	if ((quality_level > 5) && (tquality_level > 5))
+		{finalColor.rgb = mix(finalColor.rgb, rayleighColor, rayleighStrength);}
+
+	}
+
+gl_FragColor = finalColor;
 
 }

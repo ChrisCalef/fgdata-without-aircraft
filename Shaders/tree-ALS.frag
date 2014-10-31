@@ -22,6 +22,7 @@ uniform float hazeLayerAltitude;
 uniform float overcast;
 uniform float eye_alt;
 uniform float dust_cover_factor;
+uniform float air_pollution;
 uniform float landing_light1_offset;
 uniform float landing_light2_offset;
 
@@ -41,6 +42,7 @@ float mie_angle;
 
 float light_distance_fading(in float dist);
 float fog_backscatter(in float avisibility);
+float rayleigh_in_func(in float dist, in float air_pollution, in float avisibility, in float eye_alt, in float vertex_alt);
 
 vec3 searchlight();
 vec3 landing_light(in float offset);
@@ -66,7 +68,7 @@ return e / pow((1.0 + a * exp(-b * (x-c)) ),(1.0/d));
 // physically this should be exp(-arg) but for technical reasons we use a sharper cutoff
 // for distance > visibility
 
-float fog_func (in float targ)
+float tree_fog_func (in float targ)
 {
 
 
@@ -186,8 +188,6 @@ float delta_z = hazeLayerAltitude - eye_alt;
 
 
 if (dist > max(40.0, 0.07 * min(visibility,avisibility))) 
-//if (dist > 40.0)
-//if (0==1)
 {
 
 alt = eye_alt;
@@ -285,7 +285,7 @@ else
 
 
 
-transmission =  fog_func(transmission_arg);
+transmission =  tree_fog_func(transmission_arg);
 
 // there's always residual intensity, we should never be driven to zero
 if (eqColorFactor < 0.2) eqColorFactor = 0.2;
@@ -332,7 +332,14 @@ hazeColor = intensity * normalize(mix(hazeColor,  1.5* shadedFogColor, 1.0 -smoo
 
 hazeColor = intensity * normalize(mix(hazeColor,  shadedFogColor, (1.0-smoothstep(0.5,0.9,eqColorFactor)))); 
 
+// Rayleigh haze
 
+float rShade = 0.9 * smoothstep(terminator_width+ terminator, -terminator_width + terminator, yprime_alt-340000.0) + 0.1;
+float lightIntensity = length(gl_Color.rgb)/0.72 * rShade;
+vec3 rayleighColor = vec3 (0.17, 0.52, 0.87) * lightIntensity;
+float rayleighStrength = rayleigh_in_func(dist, air_pollution, avisibility/max(lightIntensity,0.05), eye_alt, eye_alt + relPos.z);
+if ((quality_level > 5) && (tquality_level > 5))
+		{fragColor.rgb = mix(fragColor.rgb, rayleighColor, rayleighStrength);}
 
 // determine the right mix of transmission and haze
 
@@ -344,6 +351,14 @@ gl_FragColor = fragColor;
 }
 else // if dist < 40.0 no fogging at all 
 {
+
+float rShade = 0.9 * smoothstep(terminator_width+ terminator, -terminator_width + terminator, yprime_alt-340000.0) + 0.1;
+float lightIntensity = length(gl_Color.rgb)/0.72 * rShade;
+vec3 rayleighColor = vec3 (0.17, 0.52, 0.87) * lightIntensity;
+float rayleighStrength = rayleigh_in_func(dist, air_pollution, avisibility/max(lightIntensity,0.05), eye_alt, eye_alt + relPos.z);
+if ((quality_level > 5) && (tquality_level > 5))
+		{fragColor.rgb = mix(fragColor.rgb, rayleighColor, rayleighStrength);}
+
 gl_FragColor = fragColor;
 }
 

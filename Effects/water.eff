@@ -373,6 +373,7 @@
 			<program>
 				<vertex-shader>Shaders/water-ALS.vert</vertex-shader>
 				<fragment-shader>Shaders/water-ALS-high.frag</fragment-shader>
+				<fragment-shader>Shaders/noise.frag</fragment-shader>
 				<fragment-shader>Shaders/cloud-shadowfunc.frag</fragment-shader>
 				<fragment-shader>Shaders/hazes.frag</fragment-shader>
 				<fragment-shader>Shaders/secondary_lights.frag</fragment-shader>

@@ -27,7 +27,6 @@
     <effect>Effects/cropgrass</effect>
     <name>CropGrassCover</name>
     <name>CropGrass</name>
-    <name>Grassland</name>
     <texture>Terrain/cropgrass-hires-autumn.png</texture>
     <object-mask>Terrain/cropgrass-hires.mask.png</object-mask>
     <xsize>2000</xsize>

@@ -53,8 +53,6 @@ uniform float landing_light1_offset;
 uniform float landing_light2_offset;
 uniform float osg_SimulationTime;
 
-uniform int quality_level;
-uniform int tquality_level;
 uniform int wind_effects;
 uniform int cloud_shadow_flag;
 uniform int rock_strata;
@@ -408,7 +406,7 @@ float water_threshold2;
 float water_factor =0.0;
 
 
-if ((dist < 5000.0)&& (quality_level > 3) && (combined_wetness>0.0))
+if ((dist < 5000.0) && (combined_wetness>0.0))
 		{
 		water_threshold1 = 1.0-0.5* combined_wetness;
 		water_threshold2 = 1.0 - 0.3 * combined_wetness;
@@ -571,34 +569,14 @@ transmission_arg = (dist-distance_in_layer)/avisibility;
 
 float eqColorFactor;
 
-
-
 if (visibility < avisibility)
 	{
-	if (quality_level > 3)
-		{
-		transmission_arg = transmission_arg + (distance_in_layer/(1.0 * visibility + 1.0 * visibility * fogstructure * 0.06 * (noise_1500m + noise_2000m -1.0) ));
-
-		}
-	else
-		{
-		transmission_arg = transmission_arg + (distance_in_layer/visibility);
-		}
-	// this combines the Weber-Fechner intensity
+	transmission_arg = transmission_arg + (distance_in_layer/(1.0 * visibility + 1.0 * visibility * fogstructure * 0.06 * (noise_1500m + noise_2000m -1.0) ));
 	eqColorFactor = 1.0 - 0.1 * delta_zv/visibility - (1.0 - effective_scattering);
-
 	}
 else 
 	{
-	if (quality_level > 3)
-		{
-		transmission_arg = transmission_arg + (distance_in_layer/(1.0 * avisibility + 1.0 * avisibility * fogstructure * 0.06 * (noise_1500m + noise_2000m  - 1.0) ));
-		}
-	else
-		{
-		transmission_arg = transmission_arg + (distance_in_layer/avisibility);
-		}
-	// this combines the Weber-Fechner intensity
+	transmission_arg = transmission_arg + (distance_in_layer/(1.0 * avisibility + 1.0 * avisibility * fogstructure * 0.06 * (noise_1500m + noise_2000m  - 1.0) ));
 	eqColorFactor = 1.0 - 0.1 * delta_zv/avisibility - (1.0 - effective_scattering);
 	}
 

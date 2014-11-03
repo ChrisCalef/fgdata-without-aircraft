@@ -237,6 +237,11 @@
         <type>float</type>
         <value><use>wetness</use></value>
       </uniform>
+     <uniform>
+        <name>rain_norm</name>
+        <type>float</type>
+        <value><use>rnorm</use></value>
+      </uniform>
       <uniform>
         <name>fogstructure</name>
         <type>float</type>

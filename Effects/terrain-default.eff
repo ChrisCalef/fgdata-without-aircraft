@@ -709,16 +709,6 @@
         <value><use>display_ysize</use></value>
       </uniform>  
       <uniform>
-        <name>quality_level</name>
-        <type>int</type>
-        <value><use>quality_level</use></value>
-      </uniform>
-      <uniform>
-        <name>tquality_level</name>
-        <type>int</type>
-        <value><use>tquality_level</use></value>
-      </uniform>
-      <uniform>
         <name>wind_effects</name>
         <type>int</type>
         <value><use>wind_effects</use></value>

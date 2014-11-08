@@ -834,4 +834,16 @@
      <min>0.0</min>
      <max>1.0</max>
   </filter>
+
+
+  <filter>
+    <name>EnvironmentInterpolator:Precipitation:SurfaceWetness</name>
+    <type>noise-spike</type>
+    <max-rate-of-change>0.004</max-rate-of-change>
+    <input>/environment/rain-norm</input>
+    <output>/environment/surface/wetness</output>
+    <min><property>/environment/surface/wetness-set</property></min>
+    <max>1.0</max>
+  </filter>
+
 </PropertyList>

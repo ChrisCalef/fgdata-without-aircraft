@@ -265,7 +265,7 @@ if ((dist < 5000.0)&& (quality_level > 3) && (wetness>0.0))
     // secondary reflection of sky irradiance
     float fresnelW =  ((0.8 * wetness) + (0.2* water_factor)) *  (1.0-smoothstep(0.0,0.4, dot(E,n) * 1.0 - 0.2 * rain_factor * wetness));
     float sky_factor = (1.0-ct*ct);//mix((1.0 - ct * ct), 1.0-effective_scattering, effective_scattering);
-    float sky_light = vec3 (1.0,1.0,1.0) * length(light_specular.rgb) * (1.0-effective_scattering);
+    vec3 sky_light = vec3 (1.0,1.0,1.0) * length(light_specular.rgb) * (1.0-effective_scattering);
     specular.rgb += sky_factor * fresnelW  * sky_light;
  
 

@@ -15,6 +15,7 @@ varying float yprime_alt;
 uniform float visibility;
 uniform float avisibility;
 uniform float scattering;
+uniform float ground_scattering;
 uniform float cloud_self_shading;
 uniform float terminator;
 uniform float terrain_alt; 
@@ -180,6 +181,20 @@ void main()
    vec4 fragColor = vec4 (gl_Color.rgb +secondary_light * light_distance_fading(dist),1.0) * texel;
 
 
+// Rayleigh haze
+
+float lightArg = (terminator-yprime_alt)/100000.0;
+
+if ((quality_level > 5) && (tquality_level > 5))
+	{
+	float rShade = 0.9 * smoothstep(terminator_width+ terminator, -terminator_width + terminator, yprime_alt-340000.0) + 0.1;
+	float shade_depth =  smoothstep (0.6,0.95,ground_scattering);// * smoothstep(0.1,1.2,rShade);
+	float lightIntensity =  ground_scattering * light_func(lightArg, 3.931e-06, 0.264, 3.827, 7.93e-06, 1.0)* rShade * (1.0 + 0.4  * shade_depth);
+	vec3 rayleighColor = vec3 (0.17, 0.52, 0.87) * lightIntensity;
+	float rayleighStrength = rayleigh_in_func(dist, air_pollution, avisibility/max(lightIntensity,0.05), eye_alt, eye_alt + relPos.z);
+	fragColor.rgb = mix(fragColor.rgb, rayleighColor, rayleighStrength);
+	}
+
 
 // here comes the terrain haze model
 
@@ -291,8 +306,6 @@ transmission =  tree_fog_func(transmission_arg);
 if (eqColorFactor < 0.2) eqColorFactor = 0.2;
 
 
-float lightArg = (terminator-yprime_alt)/100000.0;
-
 vec3 hazeColor;
 
 hazeColor.b = light_func(lightArg, 1.330e-05, 0.264, 2.527, 1.08e-05, 1.0);
@@ -301,7 +314,6 @@ hazeColor.r = light_func(lightArg, 8.305e-06, 0.161, 3.827, 3.04e-05, 1.0);
 
 
 // now dim the light for haze
-//float eShade = earthShade;
 float eShade = 0.9 * smoothstep(terminator_width+ terminator, -terminator_width + terminator, yprime_alt) + 0.1;
 
 // Mie-like factor
@@ -332,14 +344,7 @@ hazeColor = intensity * normalize(mix(hazeColor,  1.5* shadedFogColor, 1.0 -smoo
 
 hazeColor = intensity * normalize(mix(hazeColor,  shadedFogColor, (1.0-smoothstep(0.5,0.9,eqColorFactor)))); 
 
-// Rayleigh haze
 
-float rShade = 0.9 * smoothstep(terminator_width+ terminator, -terminator_width + terminator, yprime_alt-340000.0) + 0.1;
-float lightIntensity = length(gl_Color.rgb)/0.72 * rShade;
-vec3 rayleighColor = vec3 (0.17, 0.52, 0.87) * lightIntensity;
-float rayleighStrength = rayleigh_in_func(dist, air_pollution, avisibility/max(lightIntensity,0.05), eye_alt, eye_alt + relPos.z);
-if ((quality_level > 5) && (tquality_level > 5))
-		{fragColor.rgb = mix(fragColor.rgb, rayleighColor, rayleighStrength);}
 
 // determine the right mix of transmission and haze
 
@@ -351,13 +356,6 @@ gl_FragColor = fragColor;
 }
 else // if dist < 40.0 no fogging at all 
 {
-
-float rShade = 0.9 * smoothstep(terminator_width+ terminator, -terminator_width + terminator, yprime_alt-340000.0) + 0.1;
-float lightIntensity = length(gl_Color.rgb)/0.72 * rShade;
-vec3 rayleighColor = vec3 (0.17, 0.52, 0.87) * lightIntensity;
-float rayleighStrength = rayleigh_in_func(dist, air_pollution, avisibility/max(lightIntensity,0.05), eye_alt, eye_alt + relPos.z);
-if ((quality_level > 5) && (tquality_level > 5))
-		{fragColor.rgb = mix(fragColor.rgb, rayleighColor, rayleighStrength);}
 
 gl_FragColor = fragColor;
 }

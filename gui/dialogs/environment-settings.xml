@@ -321,7 +321,7 @@
       <min>0.0</min>
       <max>0.7</max>
       <live>true</live>
-      <property>/environment/surface/wetness</property>
+      <property>/environment/surface/wetness-set</property>
       <binding>
         <command>dialog-apply</command>
         <object-name>wetness</object-name>

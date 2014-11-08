@@ -24,16 +24,21 @@ FGFS.Property.prototype.hasValue = function() {
   return this.value != null;
 }
 
-FGFS.Property.prototype.getValue = function(val) {
-  return this.value;
+FGFS.Property.prototype.getValue = function(dflt) {
+  if( this.value != null ) return this.value;
+  if( dflt != null ) return dflt;
+  return null;
 }
 
-FGFS.Property.prototype.getStringValue = function(val) {
-  return this.value == null ? null : this.value.toString();
+FGFS.Property.prototype.getStringValue = function(dflt) {
+  if( this.value != null ) return this.value.toString();
+  if( dflt != null ) return dflt.toString();
+  return null;
 }
 
-FGFS.Property.prototype.getNumValue = function(val) {
-  var reply = this.value == null ? null : Number(this.value);
+FGFS.Property.prototype.getNumValue = function(dflt) {
+  var reply = this.value != null ? Number(this.value) : null;
+  if( reply == null && dflt != null ) reply = dflt;
   return (isNaN(reply) || reply == null) ? 0 : reply;
 }
 
@@ -198,11 +203,16 @@ FGFS.InputValue = function(arg) {
   this.min = null;
   this.max = null;
   this.precision = 4;
+  this.func = null;
+
+  if( arg.precision != null ) this.precision = arg.precision;
 
   this.getValue = function() {
     var value = this.value;
     if (this.property != null)
       value = this.property.getNumValue();
+    else if( this.func != null )
+      value = this.func();
 
     if (this.interpolationTable != null && this.interpolationTable.length > 0)
       return FGFS.interpolate(value, this.interpolationTable).toPrecision(this.precision);
@@ -210,7 +220,7 @@ FGFS.InputValue = function(arg) {
     value = value * this.scale + this.offset;
     if( this.min != null && value < this.min )
       return this.min.toPrecision(this.precision);
-    if( this.max != null && value > this.min )
+    if( this.max != null && value > this.max )
       return this.max.toPrecision(this.precision);
     return value.toPrecision(this.precision);
   }
@@ -232,6 +242,15 @@ FGFS.InputValue = function(arg) {
 
     if (typeof (arg.offset) != 'undefined')
       this.offset = Number(arg.offset);
+
+    if (typeof (arg.min) != 'undefined')
+      this.min = Number(arg.min);
+
+    if (typeof (arg.max) != 'undefined')
+      this.max = Number(arg.max);
+
+    if (typeof (arg.func) != 'undefined')
+      this.func = arg.func;
 
     if (typeof (arg.interpolation == 'string')) {
 
@@ -257,6 +276,8 @@ FGFS.InputValue = function(arg) {
         });
       }
     }
+  } else if (typeof (arg) == 'function') {
+    this.func = arg;
   } else {
     throw new Error('Dont know how to handle "' + arg.toString() + '"' );
   }
@@ -357,6 +378,19 @@ FGFS.TransformAnimation = function(arg) {
     return reply;
   }
 }
+FGFS.TextAnimation = function(arg) {
+  this.__proto__ = new FGFS.Animation(arg);
+  this.text = new FGFS.InputValue(arg.text);
+
+  this.makeAnimation = function() {
+    var reply = {
+      type: 'text',
+      text: this.text.getValue(),
+    };
+
+    return reply;
+  }
+}
 
 FGFS.Instrument = function(arg) {
 
@@ -383,6 +417,10 @@ FGFS.Instrument = function(arg) {
     switch (a.type) {
       case 'transform':
         animation = new FGFS.TransformAnimation(a);
+        break;
+
+      case 'text':
+        animation = new FGFS.TextAnimation(a);
         break;
 
     }

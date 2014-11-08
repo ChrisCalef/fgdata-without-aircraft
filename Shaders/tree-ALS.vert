@@ -122,10 +122,10 @@ void main()
   vec3 ecPosition = vec3(gl_ModelViewMatrix * vec4(position, 1.0));
   //normal = normalize(-ecPosition);
 
-  float n = dot(normalize(gl_LightSource[0].position.xyz), normalize(-ecPosition));
+  //float n = dot(normalize(gl_LightSource[0].position.xyz), normalize(-ecPosition));
   
 
-  vec4 diffuse_color = gl_FrontMaterial.diffuse * max(0.1, n);
+  //vec4 diffuse_color = gl_FrontMaterial.diffuse * max(0.1, n);
   //diffuse_color.a = 1.0;
   vec4 ambient_color = gl_FrontMaterial.ambient;
 
@@ -252,8 +252,9 @@ if (cloud_shadow_flag == 1)
 		{light_ambient.rgb = light_ambient.rgb * (0.5 + 0.5 * shadow_func(relPos.x, relPos.y, 1.0, dist));}
 
 
-  vec4 ambientColor = gl_FrontLightModelProduct.sceneColor + light_ambient * gl_FrontMaterial.ambient;
-  gl_FrontColor = ambientColor;
+  //vec4 ambientColor = gl_FrontLightModelProduct.sceneColor + 
+  //gl_FrontColor = ambientColor;
+  gl_FrontColor = light_ambient * gl_FrontMaterial.ambient;
   gl_FrontColor.a = mie_angle; gl_BackColor.a = mie_angle; 
 
 

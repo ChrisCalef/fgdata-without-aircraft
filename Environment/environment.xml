@@ -435,7 +435,8 @@
     <scattering type="double" userarchive="n">0.7</scattering>
     <dust-cover-factor type="double" userarchive="y">0.0</dust-cover-factor>
     <lichen-cover-factor type="double" userarchive="y">0.0</lichen-cover-factor>
-    <wetness type="double" userarchive="y">0.0</wetness>
+    <wetness-set type="double" userarchive="y">0.0</wetness-set>
+    <wetness type="double" userarchive="n">0.0</wetness>
     <snow-thickness-factor type="double" userarchive="y">1.0</snow-thickness-factor>
   </surface>
 

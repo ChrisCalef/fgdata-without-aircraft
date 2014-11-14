@@ -35,6 +35,7 @@ uniform int nmap_enabled;
 uniform int refl_enabled;
 uniform int refl_map;
 uniform int grain_texture_enabled;
+uniform int rain_enabled;
 uniform int cloud_shadow_flag;
 uniform int use_searchlight;
 uniform int use_landing_light;
@@ -54,6 +55,8 @@ uniform float refl_fresnel;
 uniform float refl_noise;
 uniform float refl_rainbow;
 uniform float grain_magnification;
+uniform float wetness;
+uniform float rain_norm;
 
 uniform float avisibility;
 uniform float cloud_self_shading;
@@ -67,6 +70,8 @@ uniform float terminator;
 uniform float terrain_alt;
 uniform float visibility;
 uniform float air_pollution;
+
+uniform float osg_SimulationTime;
 
 uniform float landing_light1_offset;
 uniform float landing_light2_offset;
@@ -85,6 +90,7 @@ uniform vec3 dirt_r_color;
 uniform vec3 dirt_g_color;
 uniform vec3 dirt_b_color;
 
+float DotNoise2D(in vec2 coord, in float wavelength, in float fractionalMaxDotSize, in float dot_density);
 float shadow_func (in float x, in float y, in float noise, in float dist);
 float fog_func (in float targ, in float altitude);
 float rayleigh_in_func(in float dist, in float air_pollution, in float avisibility, in float eye_alt, in float vertex_alt);
@@ -208,11 +214,17 @@ void main (void)
     /// END light
 
     /// BEGIN grain overlay
-    if (grain_texture_enabled > 0)
+    if (grain_texture_enabled ==1)
         {
         grainTexel = texture2D(GrainTex, gl_TexCoord[0].st * grain_magnification);
         texel.rgb = mix(texel.rgb, grainTexel.rgb,  grainTexel.a );
         }
+   else if (grain_texture_enabled == 2)
+	{
+        grainTexel = texture2D(GrainTex, rawpos.xy * grain_magnification);
+        texel.rgb = mix(texel.rgb, grainTexel.rgb,  grainTexel.a );
+	}
+
     /// END grain overlay
 
     ///BEGIN bump
@@ -342,6 +354,31 @@ void main (void)
         }
     //////////////////////////////////////////////////////////////////////
     //END Dirt
+    //////////////////////////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////////////////////////
+    //begin WETNESS
+    //////////////////////////////////////////////////////////////////////
+
+    if (rain_enabled >0.0)
+	{
+    	texel.rgb = texel.rgb * (1.0 - 0.6 * wetness);
+    	float rain_factor = 0.0;
+    	if (rain_norm > 0.0)
+		{
+    		rain_factor += DotNoise2D(rawpos.xy, 0.2 ,0.5, rain_norm) * abs(sin(6.0*osg_SimulationTime));
+    		rain_factor += DotNoise2D(rawpos.xy, 0.3 ,0.4, rain_norm) * abs(sin(6.0*osg_SimulationTime + 2.094));
+    		rain_factor += DotNoise2D(rawpos.xy, 0.4 ,0.3, rain_norm)* abs(sin(6.0*osg_SimulationTime + 4.188));
+		}
+
+    	// secondary reflection of sky irradiance in water film
+    	float fresnelW =  ((0.8 * wetness) ) *  (1.0-smoothstep(0.0,0.4, dot(N,-normalize(vertVec)) * 1.0 - 0.2 * rain_factor * wetness));
+    	float sky_factor = (1.0-ct*ct);
+    	vec3 sky_light = vec3 (1.0,1.0,1.0) * length(light_diffuse.rgb) * (1.0-effective_scattering);
+    	Specular.rgb += sky_factor * fresnelW  * sky_light;
+	}
+    /////////////////////////////////////////////////////////////////////
+    //end WETNESS
     //////////////////////////////////////////////////////////////////////
 
 

@@ -2,6 +2,16 @@
  * 
  */
 var fgCommand = {
+  oneArg : function(t1, p1) {
+    return {
+      name : '',
+      children : [ {
+        name : t1,
+        index : 0,
+        value : p1
+      }  ]
+    };
+  },
   twoArgs : function(t1, p1, t2, p2) {
     return {
       name : '',
@@ -43,6 +53,16 @@ var fgCommand = {
 
   pause : function() {
     $.post("/run.cgi?value=pause");
-  }
+  },
+
+  dialogShow: function(dlg) {
+    this.sendCommand("dialog-show", this.oneArg("dialog-name",dlg)); 
+  },
+  dialogClose: function(dlg) {
+    this.sendCommand("dialog-close", this.oneArg("dialog-name",dlg)); 
+  },
+  reposition: function() {
+    $.post("/run.cgi?value=reposition");
+  },
 };
 

@@ -98,6 +98,8 @@ please see Docs/README.model-combined.eff for documentation
 			<internal-format>normalized</internal-format>
 		</texture>
 		<!-- END Grain texture -->
+		<!-- simulate rain effects -->
+		<rain-enabled type="int">0</rain-enabled>
 		<!-- 		Dirt -->
 		<dirt-enabled type="int">0</dirt-enabled>
 		<dirt-multi type="int">0</dirt-multi>
@@ -133,6 +135,8 @@ please see Docs/README.model-combined.eff for documentation
 		<scattering><use>/rendering/scene/scattering</use></scattering>
 		<terminator><use>/environment/terminator-relative-position-m</use></terminator>
 		<fogtype><use>/sim/rendering/shaders/skydome</use></fogtype>
+    		<wetness><use>/environment/surface/wetness</use></wetness>
+		<rnorm><use>/environment/rain-norm</use></rnorm>
 		<cloudpos1_x><use>/local-weather/cloud-shadows/cloudpos-x[0]</use></cloudpos1_x>
 		<cloudpos1_y><use>/local-weather/cloud-shadows/cloudpos-y[0]</use></cloudpos1_y>
 		<cloudpos2_x><use>/local-weather/cloud-shadows/cloudpos-x[1]</use></cloudpos2_x>
@@ -427,6 +431,7 @@ please see Docs/README.model-combined.eff for documentation
 				<fragment-shader n="2">Shaders/cloud-shadowfunc.frag</fragment-shader>
 				<fragment-shader n="3">Shaders/hazes.frag</fragment-shader>
 				<fragment-shader n="4">Shaders/secondary_lights.frag</fragment-shader>
+				<fragment-shader n="5">Shaders/noise.frag</fragment-shader>
 			   </program>
 			   
 			   <uniform>
@@ -730,6 +735,15 @@ please see Docs/README.model-combined.eff for documentation
 				   </value>
 		  	   </uniform>
 
+			   <!-- simulate wetness and rain-->
+		  	   <uniform>
+				   <name>rain_enabled</name>
+				   <type>int</type>
+				   <value>
+			  	   	<use>rain-enabled</use>
+				   </value>
+		  	   </uniform>
+
 			   <!-- set the amount of ambient light correction 0.0 - 1.0  -->
 			   <uniform>
 				   <name>amb_correction</name>
@@ -848,6 +862,16 @@ please see Docs/README.model-combined.eff for documentation
         			   <name>air_pollution</name>
        				   <type>float</type>
        				   <value><use>air_pollution</use></value>
+     			   </uniform>
+   			   <uniform>
+        			   <name>rain_norm</name>
+       				   <type>float</type>
+       				   <value><use>rnorm</use></value>
+     			   </uniform>
+   			   <uniform>
+        			   <name>wetness</name>
+       				   <type>float</type>
+       				   <value><use>wetness</use></value>
      			   </uniform>
 			   <uniform>
          			   <name>view_pitch_offset</name>

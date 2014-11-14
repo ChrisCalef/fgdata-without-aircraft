@@ -271,6 +271,7 @@ html,body,#map {
 
     });
     navdbLayer.dirty = true;
+
     navdbLayer.update = function() {
       if (navdbLayer.dirty) {
         navdbLayer.dirty = false;
@@ -560,6 +561,7 @@ html,body,#map {
 
     var aircraftMarker = new L.RotatedMarker(map.getCenter(), {
       angle : 45,
+      draggable: true,
       icon : L.icon({
         iconSize : [ 60, 60 ],
         iconAnchor : [ 30, 30 ],
@@ -569,7 +571,9 @@ html,body,#map {
       zIndexOffset : 10000,
     });
     aircraftMarker.addTo(map);
+    aircraftMarker.isDragging = false;
     aircraftMarker.setState = function(s) {
+      if( this.isDragging ) return;
       var latlng = new L.LatLng(s.lat, s.lon);
       aircraftMarker.options.angle = s.heading;
       aircraftMarker.setLatLng(latlng);
@@ -577,6 +581,27 @@ html,body,#map {
       aircraftMarker.bindPopup(label);
       info.update(s);
     };
+    aircraftMarker.on('dragstart',function(evt){
+      evt.target.isDragging = true;
+    });
+    aircraftMarker.on('dragend',function(evt){
+      var pos = evt.target.getLatLng();
+      var props = {
+        name: "position",
+        children: [
+          {
+            name: "latitude-deg",
+            value: pos.lat,
+          },
+          {
+            name: "longitude-deg",
+            value: pos.lng,
+          },
+        ],
+      };
+      $.post( "/json/", JSON.stringify(props));
+      evt.target.isDragging = false;
+    });
 
     var info = L.control();
     info.onAdd = function(map) {
@@ -598,6 +623,7 @@ html,body,#map {
       this._div.innerHTML = s;
     };
 
+/*
     var altitudePlotter = L.control({
       position : 'bottomright'
     });
@@ -658,7 +684,7 @@ html,body,#map {
 
     altitudePlotter.addTo(map);
     altitudePlotter.initPlotter(map);
-
+*/
     var FollowAircraftControl = L.control();
     FollowAircraftControl.onAdd = function(map) {
       this._div = L.DomUtil.create('div', 'followAircraft');
@@ -722,10 +748,12 @@ html,body,#map {
       }, 100);
 
       PropertyChangeListener(function() {
+/*
         SetListener("/position/altitude-ft", function(n) {
           aircraftState.alt = Math.round(n.value);
           altitudePlotter.plot.plotPropertyNode(n);
         });
+*/
         SetListener("/position/latitude-deg", function(n) {
           aircraftState.lat = n.value;
         });

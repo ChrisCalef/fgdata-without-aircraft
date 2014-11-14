@@ -2196,7 +2196,10 @@ apart from most of the very excellent textures, remain. -->
 		<object-name>island-inside-red-lights</object-name>
 	</effect>
 
-
+        <effect>
+		<inherits-from>Models/Geometry/Nimitz/Effects/flightdeck</inherits-from>
+		<object-name>Flightdeck</object-name>
+	</effect>
 
 	<!-- Lighting -->
 

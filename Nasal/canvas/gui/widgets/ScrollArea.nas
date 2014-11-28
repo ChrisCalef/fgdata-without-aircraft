@@ -34,6 +34,7 @@ gui.widgets.ScrollArea = {
     if( size(arg) == 1 )
       var arg = arg[0];
     me._view.setColorBackground(arg);
+    return me;
   },
   # Reset the size of the content area, e.g. on window resize.
   #
@@ -44,7 +45,7 @@ gui.widgets.ScrollArea = {
       var arg = arg[0];
     var (x,y) = arg;
     me._size = [x,y];
-    me.update();
+    return me.update();
   },
   # Move contents to the coordinates x,y (or as far as possible)
   #
@@ -55,7 +56,7 @@ gui.widgets.ScrollArea = {
     me._content_pos[0] = x;
     me._content_pos[1] = y;
 
-    me.update();
+    return me.update();
   },
   # Move the scrollable area to the top-most position
   scrollToTop:    func me.scrollTo( me._content_pos[0], 0 ),

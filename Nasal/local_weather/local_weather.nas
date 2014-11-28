@@ -1553,6 +1553,7 @@ if (path == "new") # we have to switch to new cloud generating routines
 	local_weather.cloudAssembly.lon = lon;
 	local_weather.cloudAssembly.alt = alt;	
 	local_weather.cloudAssembly.top_shade = top_shade;
+	local_weather.cloudAssembly.alpha_factor = alpha_factor;
 
 	#print(lat," ",long, " ", alt);
 
@@ -3382,22 +3383,22 @@ var v2 = v0 * (1.2 + rand() * 0.2);
 var d2 = d0 + dsign * (3.0 * rand() + 2.0);
 
 var v3 = v0 * (1.3 + rand() * 0.4) + 5.0;
-var d3 = d0 + dsign * (3.0 * rand() + dsign * 4.0);
+var d3 = d0 + dsign * (3.0 * rand()  + 4.0);
 
 var v4 = v0 * (1.7 + rand() * 0.5) + 10.0;
-var d4 = d0 + dsign * (4.0 * rand() + dsign * 8.0);
+var d4 = d0 + dsign * (4.0 * rand()  + 8.0);
 
 var v5 = v0 * (1.7 + rand() * 0.5) + 20.0;
-var d5 = d0 + dsign * (4.0 * rand() + dsign * 10.0);
+var d5 = d0 + dsign * (4.0 * rand() +  10.0);
 
 var v6 = v0 * (1.7 + rand() * 0.5) + 40.0;
-var d6 = d0 + dsign * (4.0 * rand() + dsign * 12.0);
+var d6 = d0 + dsign * (4.0 * rand() +  12.0);
 
 var v7 = v0 * (2.0 + rand() * 0.7) + 50.0;
-var d7 = d0 + dsign * (4.0 * rand() + dsign * 13.0);
+var d7 = d0 + dsign * (4.0 * rand() +  13.0);
 
 var v8 = v0 * (2.0 + rand() * 0.7) + 55.0;;
-var d8 = d0 + dsign * (5.0 * rand() + dsign * 14.0);
+var d8 = d0 + dsign * (5.0 * rand() +  14.0);
 
 var w = windIpoint.new(lat, lon, d0, v0, d1, v1, d2, v2, d3, v3, d4, v4, d5, v5, d6, v6, d7, v7, d8, v8);
 
@@ -4562,6 +4563,10 @@ if (lowest_layer_turbulence < 0.0) {lowest_layer_turbulence = 0.0;}
 # global keeping track of lighting
 
 var top_shade = 1.0;
+
+# global cloud transparency
+
+var alpha_factor = 1.0;
 
 # global cloud size scale;
 

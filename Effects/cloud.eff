@@ -57,8 +57,8 @@
         <wrap-t>clamp</wrap-t>
       </texture-unit>
       <program>
-        <vertex-shader>Shaders/3dcloud-lightfield.vert</vertex-shader>
-        <fragment-shader>Shaders/3dcloud-lightfield.frag</fragment-shader>
+        <vertex-shader>Shaders/3dcloud-ALS.vert</vertex-shader>
+        <fragment-shader>Shaders/3dcloud-ALS.frag</fragment-shader>
         <attribute>
           <name>usrAttr1</name>
           <index>10</index>

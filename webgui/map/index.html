@@ -536,6 +536,33 @@ html,body,#map {
           bounds: L.latLngBounds(L.latLng(46.0,5.0), L.latLng(55.1,16.5) ),
         }),
 
+      "France VFR" :  new L.TileLayer(
+        'http://carte.f-aero.fr/oaci/{z}/{x}/{y}.png', 
+        {
+          minZoom : 5,
+          maxZoom : 15,
+          attribution : 'Map data © <a href="http://carte.f-aero.fr/">F-AERO</a>',
+          bounds: L.latLngBounds(L.latLng(41.0,-5.3), L.latLng(51.2,10.1) ),
+        }),
+
+      "France VAC Landing" :  new L.TileLayer(
+        'http://carte.f-aero.fr/vac-atterrissage/{z}/{x}/{y}.png', 
+        {
+          minZoom : 5,
+          maxZoom : 15,
+          attribution : 'Map data © <a href="http://carte.f-aero.fr/">F-AERO</a>',
+          bounds: L.latLngBounds(L.latLng(41.0,-5.3), L.latLng(51.2,10.1) ),
+        }),
+
+      "France VAC Approach" :  new L.TileLayer(
+        'http://carte.f-aero.fr/vac-approche/{z}/{x}/{y}.png', 
+        {
+          minZoom : 5,
+          maxZoom : 15,
+          attribution : 'Map data © <a href="http://carte.f-aero.fr/">F-AERO</a>',
+          bounds: L.latLngBounds(L.latLng(41.0,-5.3), L.latLng(51.2,10.1) ),
+        }),
+
       "Precipitation" : new L.TileLayer(
         'http://{s}.tile.openweathermap.org/map/precipitation/{z}/{x}/{y}.png', 
         {

@@ -164,10 +164,13 @@ Started September 2000 by David Megginson, david@megginson.com
        CullDrawThreadPerContext
        CullThreadPerCameraDrawThreadPerContext
    -->
+			<plod-minimum-expiry-time-secs type="double" userarchive="y">180.0</plod-minimum-expiry-time-secs>
 			<static-lod>
 				<detailed type="double" userarchive="y">1500</detailed>
 				<rough type="double" userarchive="y">9000</rough>
 				<bare type="double" userarchive="y">30000</bare>
+				<!-- ai-range-mode-pixel: true=use pixel size on screen, false=use distance from eyepoint -->
+				<ai-range-mode-pixel type="bool" userarchive="y">false</ai-range-mode-pixel>
 				<ai-detailed type="double" userarchive="y">10000</ai-detailed>
 				<!-- ai-bare type="double" userarchive="y">10000</ai-bare -->
 				<ai-interior type="double" userarchive="y">50</ai-interior>

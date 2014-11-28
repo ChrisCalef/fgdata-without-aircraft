@@ -84,10 +84,18 @@ void main()
     //rawPos = gl_Vertex.xy;
     worldPos = (osg_ViewMatrixInverse *gl_ModelViewMatrix * gl_Vertex).xyz;
     steepness = dot(normalize(gl_Normal), vec3 (0.0, 0.0, 1.0));
-    VNormal = normalize(gl_NormalMatrix * gl_Normal);
+
+    // hack: World Scenery 2.0 triangle mesh doesn't yield sensible tangents
+    // and normals, so we pretend that urban terrain is always close
+    // to flat to get rid of back triangles in urban terrain
+
+    //VNormal = normalize(gl_NormalMatrix * gl_Normal);
+    //VTangent  = gl_NormalMatrix * tangent;
+    VNormal = gl_NormalMatrix * vec3 (0.0,0.0,1.0);
+    VTangent = gl_NormalMatrix * vec3 (0.0,-1.0,0.0);
+
     ecPosition = gl_ModelViewMatrix * gl_Vertex;
 //    Normal = normalize(gl_Normal);
-    VTangent  = gl_NormalMatrix * tangent;
 //    VBinormal = gl_NormalMatrix * binormal;
 
 

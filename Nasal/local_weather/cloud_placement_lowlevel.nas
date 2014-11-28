@@ -119,7 +119,7 @@ for (i=0; i< max_num_streaks; i=i+1)
 		y = y - arg.Dy + 2.0 * rand() * arg.Dy;
 		
 		var flag = 0;
-		var	bias =1.0 - (1.0* math.abs(i-0.5 * max_num_streaks)/max_num_streaks +  1.0* math.abs(j-0.5 * aspect_num_clouds)/aspect_num_clouds);
+		var bias =1.0 - (math.abs(i-0.5 * max_num_streaks)/max_num_streaks +  math.abs(j-0.5 * aspect_num_clouds)/aspect_num_clouds);
 		var comp = -.25 * rnd_array[j] + 0.75 * bias;
 		
 		comp = comp + arg.size_bias;
@@ -133,6 +133,9 @@ for (i=0; i< max_num_streaks; i=i+1)
 			flag = 1;
 			path = select_cloud_model(arg.type,"small")
 			}
+		
+		var edge = math.pow(bias, arg.edge_power);
+		local_weather.alpha_factor = edge * arg.core_alpha + (1.0-edge) * arg.edge_alpha;
 			
 		var lat = arg.blat + m_to_lat * (y * math.cos(arg.dir) - x * math.sin(arg.dir));
 		var lon = arg.blon + m_to_lon * (x * math.cos(arg.dir) + y * math.sin(arg.dir));
@@ -145,7 +148,7 @@ for (i=0; i< max_num_streaks; i=i+1)
 	
 	}
 	#print("Cloud count: ",counter);
-
+	local_weather.alpha_factor = 1.0;
 }
 
 
@@ -228,9 +231,11 @@ for (var j=0; j<arg.n_domains; j=j+1)
 		var lat = arg.blat + m_to_lat * (y * math.cos(arg.dir) - x * math.sin(arg.dir));
 		var lon = arg.blon + m_to_lon * (x * math.cos(arg.dir) + y * math.sin(arg.dir));
 		var alt = arg.balt + arg.alt_var * 2 * (rand() - 0.5);
+		local_weather.alpha_factor = arg.halo_alpha - 0.2 + rand() * 0.2;		
 		if ((math.abs(x-domain_pos_x) < 0.3 * domain_size_x) or (math.abs(y-domain_pos_y) < 0.3 * domain_size_y))
 			{path = select_cloud_model(arg.htype,arg.hsubtype);
 			create_cloud_vec(path, lat, lon, alt, 0.0);}
+
 		}
 	for (i=0; i<n_bulk; i=i+1)
 		{
@@ -239,6 +244,7 @@ for (var j=0; j<arg.n_domains; j=j+1)
 		lat = arg.blat + m_to_lat * (y * math.cos(arg.dir) - x * math.sin(arg.dir));
 		lon = arg.blon + m_to_lon * (x * math.cos(arg.dir) + y * math.sin(arg.dir));
 		alt = arg.balt + arg.alt_var * 2 * (rand() - 0.5);
+		local_weather.alpha_factor = arg.bulk_alpha - 0.2 + rand() * 0.2;				
 		if ((math.abs(x-domain_pos_x) < 0.4 * domain_size_x) or (math.abs(y-domain_pos_y) < 0.4 * domain_size_y))
 			{
 			path = select_cloud_model(arg.type,arg.subtype);
@@ -252,13 +258,14 @@ for (var j=0; j<arg.n_domains; j=j+1)
 		lat = arg.blat + m_to_lat * (y * math.cos(arg.dir) - x * math.sin(arg.dir));
 		lon = arg.blon + m_to_lon * (x * math.cos(arg.dir) + y * math.sin(arg.dir));
 		alt = arg.balt + arg.alt_var * 2 * (rand() - 0.5);
+		local_weather.alpha_factor = arg.node_alpha - 0.2 + rand() * 0.2;				
 		path = select_cloud_model(arg.ntype,arg.nsubtype);
 		create_cloud_vec(path, lat, lon, alt, 0.0);
 		}
 
 	}
 
-
+	local_weather.alpha_factor = 1.0;
 
 }
 

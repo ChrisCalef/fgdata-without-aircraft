@@ -934,8 +934,11 @@ var showWeightDialog = func {
     var tanks = props.globals.getNode("/consumables/fuel").getChildren("tank");
     for(var i=0; i<size(tanks); i+=1) {
         var t = tanks[i];
-
+        var hidden=0;
         var tname = i ~ "";
+        var hnode = t.getNode("hidden");
+        if(hnode != nil) { hidden = hnode.getValue(); }# Check for <hidden> property ,skip adding tank if true#
+        if(!hidden){
         var tnode = t.getNode("name");
         if(tnode != nil) { tname = tnode.getValue(); }
 
@@ -989,6 +992,7 @@ var showWeightDialog = func {
         per.set("format", "%.2f");
         per.set("halign", "right");
         per.set("live", 1);
+        }
     }
 
     varbar = tcell(fuelTable, "hrule", size(tanks)+1, 0);

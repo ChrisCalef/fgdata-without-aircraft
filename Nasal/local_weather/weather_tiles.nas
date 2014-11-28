@@ -669,8 +669,7 @@ if (rand() < small_scale_persistence)
 else
 	{rnd_store = rn;}
 
-
-#rn = 0.85;
+# rn = 0.91;
 
 if (rn > 0.9)
 	{
@@ -683,6 +682,9 @@ if (rn > 0.9)
 	#local_weather.create_streak("Altocumulus",blat+get_lat(x,y,phi), blon+get_lon(x,y,phi), 12000.0+alt+alt_offset,1500.0,30,1000.0,0.2,1200.0,30,1000.0,0.2,1200.0,alpha ,1.0);
 	
 	create_2_8_altocumulus_domains(blat, blon, alt+alt_offset +12000.0, alpha);
+
+
+
 
 	# and specify the atmosphere
 	local_weather.set_atmosphere_ipoint(blat, blon, vis + 10000.0, alt+alt_offset, vis + 15000.0, 0.0, alt+alt_offset +20000.0, alt+alt_offset + 25000.0, 0.85, alt+alt_offset, alt+alt_offset + 2500.0); 
@@ -897,7 +899,7 @@ if (rand() < small_scale_persistence)
 else
 	{rnd_store = rn;}
 
-#rn = 0.01;
+# rn = 0.91;
 
 if (rn > 0.9)
 	{
@@ -3140,6 +3142,9 @@ arg.balt = alt;
 arg.alt_var = 0.0;
 arg.dir = alpha;
 arg.size_bias = 0.5;
+arg.core_alpha = 0.8;
+arg.edge_alpha = 0.0;
+arg.edge_power = 1.0;
 arg.type = "Stratus (thin)";
 
 local_weather.create_adv_undulatus(arg);
@@ -3254,6 +3259,9 @@ arg.min_domain_size_y = 5000.0;
 arg.max_domain_size_y = 24000.0;
 arg.node_fraction = 0.0;
 arg.halo_fraction = 0.4;
+arg.node_alpha = 1.0;
+arg.bulk_alpha = 0.8;
+arg.halo_alpha = 0.4;
 arg.n_domains = 12;
 arg.n = 30;
 arg.blat = lat;
@@ -3577,6 +3585,9 @@ arg.min_domain_size_y = 10000.0;
 arg.max_domain_size_y = 20000.0;
 arg.node_fraction = 0.0;
 arg.halo_fraction = 0.6;
+arg.node_alpha = 1.0;
+arg.bulk_alpha = 1.0;
+arg.halo_alpha = 0.5;
 arg.n_domains = 8;
 arg.n = 30;
 arg.blat = lat;
@@ -3638,6 +3649,9 @@ arg.min_domain_size_y = 3000.0;
 arg.max_domain_size_y = 6000.0;
 arg.node_fraction = 0.1;
 arg.halo_fraction = 0.7;
+arg.node_alpha = 1.0;
+arg.bulk_alpha = 0.8;
+arg.halo_alpha = 0.3;
 arg.n_domains = 40;
 arg.n = 30;
 arg.blat = lat;
@@ -3751,6 +3765,9 @@ arg.balt = alt;
 arg.alt_var = 0.0;
 arg.dir = alpha;
 arg.size_bias = 0.0;
+arg.core_alpha = 1.0;
+arg.edge_alpha = 0.0;
+arg.edge_power = 2.0;
 arg.type = "Cirrostratus (small)";
 
 local_weather.create_adv_undulatus(arg);
@@ -3780,6 +3797,9 @@ arg.balt = alt;
 arg.alt_var = 0.0;
 arg.dir = alpha;
 arg.size_bias = 0.0;
+arg.core_alpha = 1.0;
+arg.edge_alpha = 0.0;
+arg.edge_power = 2.0;
 arg.type = "Cirrocumulus (cloudlet)";
 
 local_weather.create_adv_undulatus(arg);
@@ -3798,6 +3818,9 @@ arg.min_domain_size_y = 3000.0;
 arg.max_domain_size_y = 6000.0;
 arg.node_fraction = 0.1;
 arg.halo_fraction = 0.7;
+arg.node_alpha = 1.0;
+arg.bulk_alpha = 0.8;
+arg.halo_alpha = 0.3;
 arg.n_domains = 20;
 arg.n = 30;
 arg.blat = lat;
@@ -3829,6 +3852,9 @@ arg.min_domain_size_y = 10000.0;
 arg.max_domain_size_y = 10000.0;
 arg.node_fraction = 0.0;
 arg.halo_fraction = 0.6;
+arg.node_alpha = 1.0;
+arg.bulk_alpha = 0.7;
+arg.halo_alpha = 0.5;
 arg.n_domains = 15;
 arg.n = 60;
 arg.blat = lat;
@@ -3861,6 +3887,9 @@ arg.min_domain_size_y = 6000.0;
 arg.max_domain_size_y = 8000.0;
 arg.node_fraction = 0.1;
 arg.halo_fraction = 0.6;
+arg.node_alpha = 0.8;
+arg.bulk_alpha = 0.5;
+arg.halo_alpha = 0.5;
 arg.n_domains = 14;
 arg.n = 30;
 arg.blat = lat;
@@ -3890,6 +3919,9 @@ arg.min_domain_size_y = 3000.0;
 arg.max_domain_size_y = 5000.0;
 arg.node_fraction = 0.0;
 arg.halo_fraction = 0.7;
+arg.node_alpha = 1.0;
+arg.bulk_alpha = 0.7;
+arg.halo_alpha = 0.7;
 arg.n_domains = 10;
 arg.n = 200;
 arg.blat = lat;
@@ -4097,6 +4129,9 @@ arg.balt = alt;
 arg.alt_var = 0.0;
 arg.dir = alpha;
 arg.size_bias = 0.0;
+arg.core_alpha = 1.0;
+arg.edge_alpha = 0.0;
+arg.edge_power = 3.0;
 arg.type = "Cirrocumulus (new)";
 #arg.type = "Fogpatch";
 
@@ -4117,6 +4152,9 @@ arg.min_domain_size_y = 3000.0;
 arg.max_domain_size_y = 6000.0;
 arg.node_fraction = 0.1;
 arg.halo_fraction = 0.7;
+arg.node_alpha = 1.0;
+arg.bulk_alpha = 0.8;
+arg.halo_alpha = 0.3;
 arg.n_domains = 7;
 arg.n = 30;
 arg.blat = lat;

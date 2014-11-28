@@ -26,6 +26,8 @@ gui.widgets.LineEdit = {
 
     if( me._view != nil )
       me._view.setText(me, me._text);
+
+    return me;
   },
   text: func()
   {
@@ -36,10 +38,11 @@ gui.widgets.LineEdit = {
     me._max_length = len;
 
     if( utf8.size(me._text) <= len )
-      return;
+      return me;
 
     me._text = utf8.substr(me._text, 0, me._max_length);
     me.moveCursor(me._cursor);
+    return me;
   },
   moveCursor: func(pos, mark = 0)
   {
@@ -50,6 +53,7 @@ gui.widgets.LineEdit = {
     me._selection_end = me._cursor;
 
     me._onStateChange();
+    return me;
   },
   home: func()
   {
@@ -79,6 +83,8 @@ gui.widgets.LineEdit = {
 
     if( me._view != nil )
       me._view.setText(me, me._text);
+
+    return me;
   },
   paste: func(mode = nil)
   {
@@ -88,7 +94,7 @@ gui.widgets.LineEdit = {
   removeSelection: func()
   {
     if( me._selection_start == me._selection_end )
-      return;
+      return me;
 
     me._text = utf8.substr(me._text, 0, me._selection_start)
              ~ utf8.substr(me._text, me._selection_end);
@@ -98,6 +104,8 @@ gui.widgets.LineEdit = {
 
     if( me._view != nil )
       me._view.setText(me, me._text);
+
+    return me;
   },
   # Remove selection or if nothing is selected the character before the cursor
   backspace: func()
@@ -106,12 +114,13 @@ gui.widgets.LineEdit = {
     {
       if( me._selection_start == 0 )
         # Before first character...
-        return;
+        return me;
 
       me._selection_start -= 1;
     }
 
     me.removeSelection();
+    return me;
   },
   # Remove selection or if nothing is selected the character after the cursor
   del: func()
@@ -120,12 +129,13 @@ gui.widgets.LineEdit = {
     {
       if( me._selection_end == utf8.size(me._text) )
         # After last character...
-        return;
+        return me;
 
       me._selection_end += 1;
     }
 
     me.removeSelection();
+    return me;
   },
 # protected:
   _setView: func(view)

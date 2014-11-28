@@ -662,9 +662,13 @@ var screenWidthCompens = {
 	statusNode: nil, # = /sim/current-view/field-of-view-compensation
 	getStatus: func me.statusNode.getValue(),
 	setStatus: func(state) me.statusNode.setValue(state),
+	wNode: nil, # = /sim/startup/xsize
+	hNode: nil, # = /sim/startup/ysize
+	getDimensions: func [me.wNode.getValue(),me.hNode.getValue()],
 	calcNewFov: func(fov=55, oldW=nil, oldH=nil, w=nil, h=nil) {
-		if (w == nil) w = getprop("/sim/rendering/camera-group/camera/viewport/width");
-		if (h == nil) h = getprop("/sim/rendering/camera-group/camera/viewport/height");
+		var dim = me.getDimensions();
+		if (w == nil) w = dim[0];
+		if (h == nil) h = dim[1];
 		if (oldW == nil) oldW = me.assumedW;
 		if (oldH == nil) oldH = me.assumedH;
 		if (w/h == oldW/oldH or h > w) return fov;
@@ -673,8 +677,9 @@ var screenWidthCompens = {
 	init: func() {
 		me.defaultFov = getprop("/sim/current-view/config/default-field-of-view-deg");
 		me.statusNode = props.globals.getNode("/sim/current-view/field-of-view-compensation", 1);
-		me.oldW = getprop("/sim/rendering/camera-group/camera/viewport/width");
-		me.oldH = getprop("/sim/rendering/camera-group/camera/viewport/height");
+		me.wNode = props.globals.getNode("/sim/startup/xsize", 1);
+		me.hNode = props.globals.getNode("/sim/startup/ysize", 1);
+		(me.oldW, me.oldH) = me.getDimensions();
 
 		setsize(me.fovStore, size(views));
 		forindex (var i; views) {
@@ -688,8 +693,7 @@ var screenWidthCompens = {
 		if (opt == nil)
 			opt = me.getStatus();
 		else me.setStatus(opt);
-		var w = getprop("/sim/rendering/camera-group/camera/viewport/width");
-		var h = getprop("/sim/rendering/camera-group/camera/viewport/height");
+		var (w, h) = me.getDimensions();
 		# Update config/default-field-of-view-deg nodes if state changed:
 		if (force or me.oldOpt != opt or me.oldW/me.oldH != w/h) {
 			me.oldW = w;

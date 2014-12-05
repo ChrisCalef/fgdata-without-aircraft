@@ -240,6 +240,16 @@
 				</value>
 			</uniform>
 			<uniform>
+				<name>gquality_level</name>
+				<type>int</type>
+				<value><use>quality_level</use></value>
+			</uniform>
+  			<uniform>
+        			<name>tquality_level</name>
+        			<type>int</type>
+        			<value><use>tquality_level</use></value>
+      			</uniform>
+			<uniform>
 				<name>snowlevel</name>
 				<type>float</type>
 				<value>

@@ -343,15 +343,16 @@ var CanvasPlacement = {
 			.setColor(m.colors.text)
 			.hide();
 		m.repl = REPL.new(placement:m, name:name);
-		# XXX: keyboard hack, needs proper GUI-integrated design
-		append(m.listeners, setlistener("/devices/status/keyboard/event", func(event) {
-			if (!event.getNode("pressed").getValue())
-				return;
-			var key = (var keyN = event.getNode("key", 1)).getValue();
-			if (key == nil or key == -1) return;
-			if (m.handle_key(key, event.getNode("modifier").getValues()))
-				keyN.setValue(-1);           # drop key event
-		}));
+		m.window.addEventListener("keydown", func(event) {
+			var modifiers = {
+				"shift":event.shiftKey,
+				"ctrl":event.ctrlKey,
+				"alt":event.altKey,
+				"meta":event.metaKey
+			};
+			if (m.handle_key(event.key, modifiers, event.keyCode))
+				#keyN.setValue(-1);           # drop key event
+		});
 		m.update();
 		append(CanvasPlacement.instances, m);
 		return m;
@@ -546,7 +547,7 @@ var CanvasPlacement = {
 			).show();
 		me.scroll.update();
 	},
-	handle_key: func(key, modifiers) {
+	handle_key: func(key, modifiers, keyCode) {
 		var modifier_str = "";
 		foreach (var m; keys(modifiers)) {
 			if (modifiers[m])
@@ -562,17 +563,17 @@ var CanvasPlacement = {
 			return 0; # had extra modifiers, reject this event
 
 		} elsif (modifiers.ctrl) {
-			if (key == 13) {              # ctrl+c
+			if (keyCode == `c`) {
 				printlog(_REPL_dbg_level, "ctrl+c: "~debug.string(me.input));
 				me.reset_input_from_history();
 				if( size(me.input) and !clipboard.setText(me.input) )
 					print("Failed to write to clipboard");
-			} elsif (key == 24) {         # ctrl+x
+			} elsif (keyCode == `x`) {
 				printlog(_REPL_dbg_level, "ctrl+x");
 				me.reset_input_from_history();
 				if( size(me.input) and !clipboard.setText(me.clear_input()) )
 					print("Failed to write to clipboard");
-			} elsif (key == 22) {         # ctrl+v
+			} elsif (keyCode == `v`) {
 				var input = clipboard.getText();
 				printlog(_REPL_dbg_level, "ctrl+v: "~debug.string(input));
 				me.reset_input_from_history();
@@ -597,13 +598,13 @@ var CanvasPlacement = {
 					}
 					i=j;
 				}
-			} elsif (key == 4) { # ctrl-D/EOF
+			} elsif (keyCode == `d`) { # ctrl-D/EOF
 				printlog(_REPL_dbg_level, "EOF");
 				me.del();
 				return 1;
 			} else return 0;
 
-		} elsif (key == `\n` or key == `\r`) {
+		} elsif (key == "Enter") {
 			printlog(_REPL_dbg_level, "return (key: "~key~", shift: "~modifiers.shift~")");
 			me.reset_input_from_history();
 			var reset_text = 1;
@@ -626,14 +627,14 @@ var CanvasPlacement = {
 				me.continue_line(reset_text:reset_text);
 			else me.new_prompt();
 
-		} elsif (key == 8) {               # backspace
+		} elsif (key == "Backspace") {               # backspace
 			printlog(_REPL_dbg_level, "back");
 			me.reset_input_from_history();
 			if (me.remove_char() == nil) return 1; # nothing happened, since the input
 			                                       # field was blank, but capture the event
 			me.completion_pos = -1;
 
-		} elsif (key == 357) {             # up
+		} elsif (key == "Up") {             # up
 			printlog(_REPL_dbg_level, "up");
 			if (me.curr == 0) return 1;
 			me.curr -= 1;
@@ -643,7 +644,7 @@ var CanvasPlacement = {
 				me.replace_line(me.history[me.curr], 0);
 			me.completion_pos = -1;
 
-		} elsif (key == 359) {             # down
+		} elsif (key == "Down") {             # down
 			printlog(_REPL_dbg_level, "down");
 			if (me.curr == size(me.history)) return 1;
 			me.curr += 1;
@@ -653,12 +654,12 @@ var CanvasPlacement = {
 				me.replace_line(me.history[me.curr], 0);
 			me.completion_pos = -1;
 
-		} elsif (key == 27) {  # escape -> cancel
+		} elsif (key == "Escape") {  # escape -> cancel
 			printlog(_REPL_dbg_level, "esc");
 			me.del();
 			return 1;
 
-		} elsif (key == `\t`) {            # tab
+		} elsif (key == "Tab") {            # tab
 			printlog(_REPL_dbg_level, "tab");
 			return 0;
 			me.reset_input_from_history();
@@ -666,13 +667,13 @@ var CanvasPlacement = {
 				me.input = me.complete(me.input, modifiers.shift ? -1 : 1);
 			}
 
-		} elsif (!string.isprint(key)) {
+		} elsif (size(key) > 1 or !string.isprint(key[0])) {
 			printlog(_REPL_dbg_level, "other key: "~key);
 			return 0;                  # pass other funny events
 
 		} else {
-			printlog(_REPL_dbg_level, "key: "~key~" (`"~chr(key)~"`)");
-			me.add_char(key);
+			printlog(_REPL_dbg_level, "key: "~key[0]~" (`"~key~"`)");
+			me.add_char(key[0]);
 			me.completion_pos = -1;
 		}
 

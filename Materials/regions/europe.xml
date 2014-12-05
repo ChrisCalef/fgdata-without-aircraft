@@ -23,6 +23,41 @@
     </equals>
   </condition>
 
+   <material>
+    <name>BarrenCover</name>
+    <name>Dirt</name>
+    <name>OpenMining</name>
+    <name>Rock</name>
+    <name>Dump</name>
+    <effect>Effects/rock</effect>
+    <texture-set>
+      <texture>Terrain/rock.png</texture>
+      <texture n="11">Terrain/grass_hires.png</texture>
+      <texture n="12">Terrain/rock_alt.png</texture>
+      <texture n="13">Terrain/rock.png</texture>
+      <texture n="14">Terrain/grain_texture.png</texture>
+    </texture-set>
+    <parameters>
+      <grain_strength>0.7</grain_strength>
+      <transition_model>0.3</transition_model>
+      <hires_overlay_bias>-0.2</hires_overlay_bias>
+      <overlay-alpha type="float">0.4</overlay-alpha>
+      <overlay-bias type="float">0.0</overlay-bias>
+      <contrast type="float">1.0</contrast>
+      <crack-depth type="float">0.6</crack-depth>
+      <crack-pattern-stretch type="float">7.0</crack-pattern-stretch>
+      <rock-brightness type="float">1.0</rock-brightness>
+      <grain-fade-power type="float">1.0</grain-fade-power>
+      <rock_strata>0</rock_strata>
+    </parameters>
+    <xsize>1000</xsize>
+    <ysize>1000</ysize>
+    <solid>1</solid>
+    <friction-factor>0.9</friction-factor>
+    <rolling-friction>0.1</rolling-friction>
+    <bumpiness>0.3</bumpiness>
+  </material>
+
   <material>
     <effect>Effects/cropgrass</effect>
     <name>CropGrassCover</name>

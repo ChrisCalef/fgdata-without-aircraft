@@ -221,6 +221,11 @@
         <value><use>air_pollution</use></value>
       </uniform>
       <uniform>
+        <name>season</name>
+        <type>float</type>
+        <value><use>season</use></value>
+      </uniform>
+      <uniform>
         <name>view_pitch_offset</name>
         <type>float</type>
         <value><use>view_pitch_offset</use></value>

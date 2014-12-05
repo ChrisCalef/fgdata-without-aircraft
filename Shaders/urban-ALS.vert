@@ -143,16 +143,6 @@ void main()
 // early culling of vertices which can't be seen due to ground haze despite being in aloft visibility range
 
 float delta_z = hazeLayerAltitude - eye_alt;
-//if (((dist * (relPos.z - delta_z)/relPos.z >  visibility ) && (relPos.z < 0.0) && (delta_z < 0.0) && (dist > 30000.0)))
-if (0==1)
-	{
-	gl_Position = vec4(0.0, 0.0, -1000.0, 1.0); // move outside of view frustrum, gets culled before reaching fragment shader
-   	earthShade = 1.0;
-    	mie_angle = 1.0;
-	yprime_alt = 0.0;
-	}
-else
-	{
 
 
     // branch dependent on daytime
@@ -284,11 +274,6 @@ float shade_depth =  1.0 * smoothstep (0.6,0.95,ground_scattering) * (1.0-smooth
     constantColor = gl_FrontMaterial.emission
         + gl_Color * (gl_LightModel.ambient + light_ambient);
 
-
-     
-
-
-}
 	
 }
 

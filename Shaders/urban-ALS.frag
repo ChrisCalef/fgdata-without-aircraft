@@ -57,6 +57,8 @@ uniform int cloud_shadow_flag;
 uniform int use_searchlight;
 uniform int use_landing_light;
 uniform int use_alt_landing_light;
+uniform int gquality_level;
+uniform int tquality_level;
 
 const float scale = 1.0;
 int linear_search_steps = 10;
@@ -305,7 +307,7 @@ vec4 dust_color;
 float noise_1500m = Noise3D(worldPos.xyz,1500.0);
 float noise_2000m = Noise3D(worldPos.xyz,2000.0);
 
-if (quality_level > 2)
+if (gquality_level > 2)
 	{
 	// mix dust
     	dust_color = vec4 (0.76, 0.71, 0.56, 1.0);
@@ -342,11 +344,31 @@ if (quality_level > 2)
     vec4 p = vec4( ecPos3 + tile_size * V * (d-1.0) * depthfactor / s.z, 1.0 );
 
 
-// Rayleigh color shift due to out-scattering
 
-    float rayleigh_length = 0.5 * avisibility * (2.5 - 1.9 * air_pollution)/alt_factor(eye_alt, eye_alt+relPos.z);
-    float outscatter = 1.0-exp(-dist/rayleigh_length);
-    finalColor.rgb = rayleigh_out_shift(finalColor.rgb,outscatter);
+
+
+float lightArg = (terminator-yprime_alt)/100000.0;
+
+vec3 hazeColor;
+
+hazeColor.b = light_func(lightArg, 1.330e-05, 0.264, 2.527, 1.08e-05, 1.0);
+hazeColor.g = light_func(lightArg, 3.931e-06, 0.264, 3.827, 7.93e-06, 1.0);
+hazeColor.r = light_func(lightArg, 8.305e-06, 0.161, 3.827, 3.04e-05, 1.0);
+
+// Rayleigh color shifts 
+
+    if ((gquality_level > 5) && (tquality_level > 5))
+    	{
+	float rayleigh_length = 0.5 * avisibility * (2.5 - 1.9 * air_pollution)/alt_factor(eye_alt, eye_alt+relPos.z);
+	float outscatter = 1.0-exp(-dist/rayleigh_length);
+        finalColor.rgb = rayleigh_out_shift(finalColor.rgb,outscatter);
+// Rayleigh color shift due to in-scattering
+	float rShade = 1.0 - 0.9 * smoothstep(-terminator_width+ terminator, terminator_width + terminator, yprime_alt + 420000.0);
+	float lightIntensity = length(hazeColor * effective_scattering) * rShade;
+	vec3 rayleighColor = vec3 (0.17, 0.52, 0.87) * lightIntensity;
+   	float rayleighStrength = rayleigh_in_func(dist, air_pollution, avisibility/max(lightIntensity,0.05), eye_alt, eye_alt + relPos.z);
+  	finalColor.rgb = mix(finalColor.rgb, rayleighColor,rayleighStrength);
+	}
 
 // here comes the terrain haze model
 
@@ -423,7 +445,7 @@ float eqColorFactor;
 
 if (visibility < avisibility)
 	{
-	if (quality_level > 3)
+	if (gquality_level > 3)
 		{
 		transmission_arg = transmission_arg + (distance_in_layer/(1.0 * visibility + 1.0 * visibility * fogstructure * 0.06 * (noise_1500m + noise_2000m -1.0) ));
 
@@ -438,7 +460,7 @@ if (visibility < avisibility)
 	}
 else
 	{
-	if (quality_level > 3)
+	if (gquality_level > 3)
 		{
 		transmission_arg = transmission_arg + (distance_in_layer/(1.0 * avisibility + 1.0 * avisibility * fogstructure * 0.06 * (noise_1500m + noise_2000m  - 1.0) ));
 		}
@@ -458,17 +480,11 @@ transmission =  fog_func(transmission_arg, alt);
 if (eqColorFactor < 0.2) eqColorFactor = 0.2;
 
 
-float lightArg = (terminator-yprime_alt)/100000.0;
 
-vec3 hazeColor;
-
-hazeColor.b = light_func(lightArg, 1.330e-05, 0.264, 2.527, 1.08e-05, 1.0);
-hazeColor.g = light_func(lightArg, 3.931e-06, 0.264, 3.827, 7.93e-06, 1.0);
-hazeColor.r = light_func(lightArg, 8.305e-06, 0.161, 3.827, 3.04e-05, 1.0);
 
 
 // now dim the light for haze
-eShade = 0.9 * smoothstep(terminator_width+ terminator, -terminator_width + terminator, yprime_alt) + 0.1;
+eShade = 1.0 - 0.9 * smoothstep(-terminator_width+ terminator, terminator_width + terminator, yprime_alt);
 
 // Mie-like factor
 
@@ -517,35 +533,14 @@ if (intensity > 0.0) // this needs to be a condition, because otherwise hazeColo
 	}
 
 
-// blue Rayleigh scattering with distance
-
-float rShade = 0.9 * smoothstep(terminator_width+ terminator, -terminator_width + terminator, yprime_alt-340000.0) + 0.1;
-float lightIntensity = length(light_diffuse.rgb)/1.73 * rShade;
-vec3 rayleighColor = vec3 (0.17, 0.52, 0.87) * lightIntensity;
-float rayleighStrength = rayleigh_in_func(dist, air_pollution, avisibility/max(lightIntensity,0.05), eye_alt, eye_alt + relPos.z);
-finalColor.rgb = mix(finalColor.rgb, rayleighColor,rayleighStrength);
-
-
 finalColor.rgb = mix((eqColorFactor * hazeColor * eShade) +secondary_light * fog_backscatter(avisibility), finalColor.rgb,transmission);
-gl_FragColor = finalColor;
 
 }
-else // if dist < threshold no fogging at all
-{
-// blue Rayleigh scattering with distance
 
-float rShade = 0.9 * smoothstep(terminator_width+ terminator, -terminator_width + terminator, yprime_alt-340000.0) + 0.1;
-float lightIntensity = length(light_diffuse.rgb)/1.73 * rShade;
-vec3 rayleighColor = vec3 (0.17, 0.52, 0.87) * lightIntensity;
-float rayleighStrength = rayleigh_in_func(dist, air_pollution, avisibility/max(lightIntensity,0.05), eye_alt, eye_alt + relPos.z);
-finalColor.rgb = mix(finalColor.rgb, rayleighColor,rayleighStrength);
+
 
 
 gl_FragColor = finalColor;
-}
-
-
-   // gl_FragColor = finalColor;
 
     if (dot(normal,-V) > 0.1) {
         vec4 iproj = gl_ProjectionMatrix * p;

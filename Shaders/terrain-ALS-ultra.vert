@@ -262,7 +262,7 @@ light_ambient = light_ambient * ((1.0+steepness)/2.0 * 1.2 + (1.0-steepness)/2.0
 // deeper shadows when there is lots of direct light
 
 float shade_depth =  1.0 * smoothstep (0.6,0.95,ground_scattering) * (1.0-smoothstep(0.1,0.5,overcast)) * smoothstep(0.4,1.5,earthShade);
-
+shade_depth = 0.0;
    light_ambient.rgb = light_ambient.rgb * (1.0 - shade_depth);
    light_diffuse.rgb = light_diffuse.rgb * (1.0 + 1.2 * shade_depth);
 
@@ -270,7 +270,7 @@ float shade_depth =  1.0 * smoothstep (0.6,0.95,ground_scattering) * (1.0-smooth
 
 // default lighting based on texture and material using the light we have just computed
 
- diffuse_term = diffuse_color* light_diffuse;
+ diffuse_term = diffuse_color * light_diffuse;
     vec4 constant_term = gl_FrontMaterial.emission + ambient_color *
         (gl_LightModel.ambient +  light_ambient);
   

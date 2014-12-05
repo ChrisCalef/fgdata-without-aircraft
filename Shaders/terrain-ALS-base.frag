@@ -17,12 +17,10 @@ varying float mie_angle;
 uniform float visibility;
 uniform float avisibility;
 uniform float scattering;
-//uniform float ground_scattering;
 uniform float terminator;
 uniform float terrain_alt; 
 uniform float hazeLayerAltitude;
 uniform float overcast;
-//uniform float altitude;
 uniform float eye_alt;
 uniform float cloud_self_shading;
 
@@ -226,8 +224,7 @@ hazeColor.r = light_func(lightArg, 8.305e-06, 0.161, 3.827, 3.04e-05, 1.0);
 
 
 // now dim the light for haze
-
-eShade = 0.9 * smoothstep(terminator_width+ terminator, -terminator_width + terminator, yprime_alt) + 0.1;
+eShade = 1.0 - 0.9 * smoothstep(-terminator_width+ terminator, terminator_width + terminator, yprime_alt);
 
 // Mie-like factor
 

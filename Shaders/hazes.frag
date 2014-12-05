@@ -54,11 +54,11 @@ else
 float rayleigh_in_func(in float dist, in float air_pollution, in float avisibility, in float eye_alt, in float vertex_alt)
 {
 
-float fade_length = avisibility * (2.5 - 2.0 * air_pollution);
+float fade_length = avisibility * (2.5 - 2.2 * sqrt(air_pollution));
 
 fade_length = fade_length / alt_factor(eye_alt, vertex_alt);
 
-return 1.0-exp(-dist/max(35000.0,fade_length));
+return 1.0-exp(-dist/max(15000.0,fade_length));
 }
 
 

@@ -520,6 +520,13 @@ void main(void)
 
 	finalColor *= vec4 (ambient_light.rgb + secondary_light * light_distance_fading(dist), ambient_light.a);
 
+	float lightArg = (terminator-yprime_alt)/100000.0;
+
+	vec3 hazeColor;
+	hazeColor.b = light_func(lightArg, 1.330e-05, 0.264, 2.527, 1.08e-05, 1.0);
+	hazeColor.g = light_func(lightArg, 3.931e-06, 0.264, 3.827, 7.93e-06, 1.0);
+	hazeColor.r = light_func(lightArg, 8.305e-06, 0.161, 3.827, 3.04e-05, 1.0);
+
 
 // Rayleigh color shift due to out-scattering
 
@@ -535,12 +542,15 @@ void main(void)
 
 // Rayleigh color shift due to in-scattering
 
-float rShade = 0.9 * smoothstep(terminator_width+ terminator, -terminator_width + terminator, yprime_alt-340000.0) + 0.1;
-	float lightIntensity = length(gl_Color.rgb)/1.73 * rShade;
+   if ((quality_level > 5) && (tquality_level > 5))
+	{
+	float rShade = 1.0 - 0.9 * smoothstep(-terminator_width+ terminator, terminator_width + terminator, yprime_alt+420000.0);
+	//float lightIntensity = length(gl_Color.rgb* gl_FrontMaterial.diffuse.rgb)/1.73 * rShade;
+   	float lightIntensity = length(hazeColor * effective_scattering) * rShade;
 	vec3 rayleighColor = vec3 (0.17, 0.52, 0.87) * lightIntensity;
 	float rayleighStrength = rayleigh_in_func(dist, air_pollution, avisibility/max(lightIntensity,0.05), eye_alt, eye_alt + relPos.z);
-	if ((quality_level > 5) && (tquality_level > 5))
-		{finalColor.rgb = mix(finalColor.rgb, rayleighColor, rayleighStrength);}
+        finalColor.rgb = mix(finalColor.rgb, rayleighColor, rayleighStrength);
+	}
 
 
 // here comes the terrain haze model
@@ -645,15 +655,10 @@ transmission =  fog_func(transmission_arg, eye_alt);
 if (eqColorFactor < 0.2) eqColorFactor = 0.2;
 
 
-float lightArg = (terminator-yprime_alt)/100000.0;
 
-vec3 hazeColor;
-hazeColor.b = light_func(lightArg, 1.330e-05, 0.264, 2.527, 1.08e-05, 1.0);
-hazeColor.g = light_func(lightArg, 3.931e-06, 0.264, 3.827, 7.93e-06, 1.0);
-hazeColor.r = light_func(lightArg, 8.305e-06, 0.161, 3.827, 3.04e-05, 1.0);
 
 // now dim the light for haze
-float eShade = 0.9 * smoothstep(terminator_width+ terminator, -terminator_width + terminator, yprime_alt) + 0.1;
+float eShade = 1.0 - 0.9 * smoothstep(-terminator_width+ terminator, terminator_width + terminator, yprime_alt);
 
 // Mie-like factor
 

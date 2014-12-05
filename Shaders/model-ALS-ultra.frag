@@ -494,12 +494,16 @@ void main (void)
 
     vec3 hazeColor;
 
+	hazeColor.b = light_func(fog_lightArg-0.5, 1.330e-05, 0.264, 2.527, 1.08e-05, 1.0);
+        hazeColor.g = light_func(fog_lightArg-0.5, 3.931e-06, 0.264, 3.827, 7.93e-06, 1.0);
+        hazeColor.r = light_func(fog_lightArg-0.5, 8.305e-06, 0.161, 3.827, 3.04e-05, 1.0);
+	float rShade = 1.0 - 0.9 * smoothstep(-terminator_width+ terminator, terminator_width + terminator, yprime_alt + 420000.0);
+	float lightIntensity = length(hazeColor * effective_scattering) * rShade;
+
     if (transmission<  1.0)
         {
 
-        hazeColor.b = light_func(fog_lightArg-0.5, 1.330e-05, 0.264, 2.527, 1.08e-05, 1.0);
-        hazeColor.g = light_func(fog_lightArg-0.5, 3.931e-06, 0.264, 3.827, 7.93e-06, 1.0);
-        hazeColor.r = light_func(fog_lightArg-0.5, 8.305e-06, 0.161, 3.827, 3.04e-05, 1.0);
+        
 
         if (fog_lightArg < 10.0)
             {
@@ -529,21 +533,23 @@ void main (void)
 
 
     /// END fog color
-    fragColor = clamp(fragColor, 0.0, 1.0);
-    hazeColor = clamp(hazeColor, 0.0, 1.0);
+	fragColor = clamp(fragColor, 0.0, 1.0);
+    	hazeColor = clamp(hazeColor, 0.0, 1.0);
 
     ///BEGIN Rayleigh fog ///
 
-	float rShade = 0.9 * smoothstep(terminator_width+ terminator, -terminator_width + terminator, yprime_alt-340000.0) + 0.1;
-	float lightIntensity = length(light_diffuse.rgb)/1.73 * rShade;
+    	// Rayleigh color shift due to out-scattering
+    	float rayleigh_length = 0.5 * avisibility * (2.5 - 1.9 * air_pollution)/alt_factor(eye_alt, eye_alt+relPos.z);
+    	float outscatter = 1.0-exp(-dist/rayleigh_length);
+    	fragColor.rgb = rayleigh_out_shift(fragColor.rgb,outscatter);
+
 	vec3 rayleighColor = vec3 (0.17, 0.52, 0.87) * lightIntensity;
-	float rayleighStrength = rayleigh_in_func(dist, air_pollution, avisibility/max(lightIntensity,0.05), eye_alt, eye_alt + relPos.z);
-	fragColor.rgb = mix(fragColor.rgb, rayleighColor,rayleighStrength);
+   	float rayleighStrength = rayleigh_in_func(dist, air_pollution, avisibility/max(lightIntensity,0.05), eye_alt, eye_alt + relPos.z);
+  	fragColor.rgb = mix(fragColor.rgb, rayleighColor,rayleighStrength);
 
     /// END Rayleigh fog
 
 
-    //fragColor = fragColor * smoothstep(-0.05, 0.05, ct);
     fragColor.rgb = mix(eqColorFactor * hazeColor * fog_earthShade +secondary_light * fog_backscatter(avisibility), fragColor.rgb,transmission);
     gl_FragColor = fragColor;
     }
